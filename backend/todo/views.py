@@ -202,8 +202,16 @@ class TaskViewSet(viewsets.ViewSet):
             bucket = bucket.first()
             task   = bucket.tasks.get(pk=pk)
 
-            for field, value in dict(task_data.validated_data).items():
-                setattr(task, field, value)
+            # TODO:- Serializer save method is returning 304 need to figure out better solution than this one
+            try:
+                task.is_done = request.data['status']
+            except KeyError:
+                pass
+
+            try:
+                task.text = request.data['text']
+            except KeyError:
+                pass
 
             task.save()
 
