@@ -3,13 +3,29 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from .serializers import (TaskSerializer,
-                          TaskListSerializer,
+                          TaskUpdateSerializer,
                           TaskBucketSerializer,
                           TaskBucketListSerializer)
 
 __author__ = "Hariom"
 
 logger = logging.getLogger(__name__)
+
+
+"""
+Story :- 
+As a user, I want to create a collection of tasks and I want to call them bucket, in which i can create
+multiple tasks and I can mark them as done or not done.
+
+- The bucket will have only name which will be associated to user
+- User can always change the name of his bucket 
+- User can check the tasks present in bucket
+- User can add task in the bucket
+- User can update the content of task present in his bucket ONLY
+- User can delete his task 
+- User can mark his task `done` or `undone`
+- User can delete his complete bucket
+"""
 
 
 class TaskBucketViewSet(viewsets.ViewSet):
@@ -150,10 +166,12 @@ class TaskViewSet(viewsets.ViewSet):
                 "detail": "Unable to add task"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        task.save()
+        task = task.save()
 
         return Response({
-            "detail": "Task saved successfully"
+            "detail": "Task saved successfully",
+            "text"  : task.text,
+            "id"    : task.pk
         }, status=status.HTTP_200_OK)
 
     @staticmethod
@@ -173,18 +191,29 @@ class TaskViewSet(viewsets.ViewSet):
                 "detail": "Task doesn't belong to user"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        task = bucket.tasks.get(pk=pk)
+        task_data = TaskUpdateSerializer(data=request.data, partial=True)
+
+        if not task_data.is_valid():
+            return Response({
+                "detail": "No text or completion status found"
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            task.text = request.data["text"]
+            bucket = bucket.first()
+            task   = bucket.tasks.get(pk=pk)
+
+            for field, value in dict(task_data.validated_data).items():
+                setattr(task, field, value)
+
             task.save()
 
             return Response({
                 "detail": "Task updated successfully"
             }, status=status.HTTP_200_OK)
-        except KeyError:
+        except Exception as error:
+            logger.exception(error)
             return Response({
-                "detail": "Please enter the text"
+                "detail": "Oops!!! something went wrong, please try again"
             }, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
@@ -204,7 +233,8 @@ class TaskViewSet(viewsets.ViewSet):
                 "detail": "Task doesn't belong to user"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        task = bucket.tasks.get(pk=pk)
+        bucket = bucket.first()
+        task   = bucket.tasks.get(pk=pk)
 
         task.delete()
 

@@ -28,6 +28,18 @@ class TaskSerializer(serializers.ModelSerializer):
         ]
 
 
+class TaskUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer to update task's text and is_done status
+    """
+    class Meta:
+        model  = models.Task
+        fields = [
+            'text',
+            'is_done'
+        ]
+
+
 class TaskListSerializer(serializers.ModelSerializer):
     """
     Serializer to list tasks
