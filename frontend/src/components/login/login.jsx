@@ -31,12 +31,14 @@ class Login extends Component {
       axios.post( BASE_URL + '/account/api/login',loginData)
       .then(res => {
         if(res.data && res.data.token) {
-          this.props.dispatch({type:'USER', user : {userName : loginData.username}})
+          this.props.dispatch({type:'USER', user : {userName : loginData.username, lastLogin : res.data['last_login']}})
           localStorage.setItem('token',res.data.token)
           localStorage.setItem('userName',loginData.username)
-
-
+          localStorage.setItem('lastLogin',res.data['last_login'])
+          setTimeout(() => {
+          console.log(localStorage.getItem('token'))
           this.props.history.push('/')
+          },2000)
         
         }
         else{

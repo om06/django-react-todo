@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {
-MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavItem, MDBNavbarToggler, MDBCollapse, MDBFormInline,
+MDBNavbar, MDBBtn, MDBNavbarBrand, MDBNavbarNav, MDBNavItem, MDBNavbarToggler, MDBCollapse, MDBFormInline,
 } from "mdbreact";
 import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -25,10 +25,28 @@ render() {
           <MDBNavbarNav right>
             <MDBNavItem>
               <MDBFormInline waves>
-                <div className="md-form my-0 white-text">
+                <div className="md-form my-0 white-text p-3">
                   Howdy {this.props.heading} !
+
                 </div>
+
               </MDBFormInline>
+              
+            </MDBNavItem>
+
+            <MDBNavItem>
+              <MDBFormInline waves>
+                <div className="md-form my-0 white-text p-3">
+                  Last Login : {this.props.lastLogin}
+
+                </div>
+
+              </MDBFormInline>
+              
+            </MDBNavItem>
+            <MDBNavItem>
+              
+                <MDBBtn color="danger" type="button" className="ml-5" onClick={this.props.handleLogOut}>Logout</MDBBtn>
             </MDBNavItem>
           </MDBNavbarNav>
         </MDBCollapse>

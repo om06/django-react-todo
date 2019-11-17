@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import Navbar from '../Navbar/navbar';
 import Checkbox from '@material-ui/core/Checkbox';
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCardTitle, MDBCardText, MDBCol, MDBIcon, MDBInput } from 'mdbreact';
-import BASE_URL, {headers} from '../../config/config';
+import BASE_URL, {getHeaders} from '../../config/config';
 import Modal from '../modals/modal';
+
+
 
 class Todo extends Component {
     state = { 
@@ -14,7 +16,7 @@ class Todo extends Component {
      }
 
     componentDidMount() {
-        axios.get(BASE_URL + '/todo/api/buckets',{headers})
+        axios.get(BASE_URL + '/todo/api/buckets',{headers : getHeaders()})
         .then(res => {
             console.log(res)
             this.setState({buckets : res.data})
@@ -23,39 +25,40 @@ class Todo extends Component {
 
 
     handleTaskStatusUpdate = (id, status) => {
-        // axios.put(BASE_URL + `/todo/api/tasks/${id}`, {}, {headers})
-        // .then(res => {
-        //     if(res.status === 200) {
+        axios.put(BASE_URL + `/todo/api/tasks/${id}`, {}, {headers : getHeaders()})
+        .then(res => {
+            if(res.status === 200) {
 
-        //         let clonedBuckets = [...this.state.buckets]
-        //         console.log(clonedBuckets)
-        //         clonedBuckets = clonedBuckets.map(bucket => {
-        //             let newTasks = bucket.tasks.map(task => {
-        //                 if(task.id===id) {
-        //                     let newTask = {...task}
-        //                     newTask['is_done'] = status 
+                let clonedBuckets = [...this.state.buckets]
+                console.log(clonedBuckets)
+                clonedBuckets = clonedBuckets.map(bucket => {
+                    let newTasks = bucket.tasks.map(task => {
+                        if(task.id===id) {
+                            let newTask = {...task}
+                            newTask['is_done'] = status 
                             
-        //                     console.log(newTask)
-        //                     return newTask
-        //                 }
-        //                 return {...task}
-        //             })
+                            console.log(newTask)
+                            return newTask
+                        }
+                        return {...task}
+                    })
 
-        //             return {...bucket, tasks : newTasks}
+                    return {...bucket, tasks : newTasks}
 
-        //         })
-        //         console.log(clonedBuckets)
-        //         this.setState({buckets : clonedBuckets})
-        //     }
-        // })
-        // .catch(err => {
-        //   alert('could not update task')
-        // })
+                })
+                console.log(clonedBuckets)
+                this.setState({buckets : clonedBuckets})
+            }
+        })
+        .catch(err => {
+          alert('could not update task')
+          
+        })
     }
 
 
     handleDelete = (id) => {
-        axios.delete(BASE_URL + `/todo/api/tasks/${id}`, {headers})
+        axios.delete(BASE_URL + `/todo/api/tasks/${id}`, {headers :getHeaders()})
         .then(res => {
             if(res.status === 200 || true) {
 
@@ -87,7 +90,7 @@ class Todo extends Component {
     }
 
     handleEditSave = (id, text) => {
-      axios.put(BASE_URL + '/todo/api/tasks/' + id , {text : text}, {headers})
+      axios.put(BASE_URL + '/todo/api/tasks/' + id , {text : text}, {headers :getHeaders()})
       .then(res => {
         console.log(res)
         if(res.status === 200){
@@ -123,7 +126,7 @@ class Todo extends Component {
 
 
     handleBucketDelete = (id) => {
-      axios.delete(BASE_URL + `/todo/api/buckets/${id}`,{headers})
+      axios.delete(BASE_URL + `/todo/api/buckets/${id}`,{headers:getHeaders()})
       .then(res => {
         if(res.status === 200) {
           let clonedBuckets = this.state.buckets.filter(item => item.id !== id)
@@ -134,10 +137,10 @@ class Todo extends Component {
 
 
     handleAddTask = (id, text,bucketId) => {
-      axios.post(BASE_URL + '/todo/api/tasks', {bucket : bucketId, text : text}, {headers})
+      axios.post(BASE_URL + '/todo/api/tasks', {bucket : bucketId, text : text}, {headers :getHeaders()})
       .then(res => {
         if(res.status === 200) {
-        axios.get(BASE_URL + '/todo/api/buckets',{headers})
+        axios.get(BASE_URL + '/todo/api/buckets',{headers :getHeaders()})
         .then(res => {
             console.log(res)
             this.setState({buckets : res.data})
@@ -150,19 +153,29 @@ class Todo extends Component {
 
 
     handleAddBucket = (id,text,bucketId) => {
-      axios.post(BASE_URL + '/todo/api/buckets',{name : text},{headers})
+      axios.post(BASE_URL + '/todo/api/buckets',{name : text},{headers : getHeaders()})
       .then(res => {
         if(res.status === 200) {
 
           this.setState({isModalAddBucketOpen : false})
 
-        axios.get(BASE_URL + '/todo/api/buckets',{headers})
+        axios.get(BASE_URL + '/todo/api/buckets',{headers : getHeaders()})
         .then(res => {
             console.log(res)
             this.setState({buckets : res.data})
         })
         }
       })
+      .catch(err => {
+        alert('could not create bucket')
+      })
+    }
+
+    handleLogout = () => {
+      console.log('hi')
+      localStorage.removeItem('token')
+      localStorage.removeItem('userName')
+      this.props.history.push('/')
     }
     
 
@@ -173,7 +186,7 @@ class Todo extends Component {
         console.log(this.props) 
         return ( 
             <React.Fragment>
-                <Navbar heading={this.props.user.userName}/>
+                <Navbar heading={this.props.user.userName} handleLogOut = {this.handleLogout} lastLogin = {this.props.user.lastLogin}/>
                 {
                     this.state.buckets.map(item => {
 
@@ -292,7 +305,7 @@ class Todo extends Component {
 
 
 const mapStateToProps = state => {
-    console.log()
+    console.log(state)
     const {user}=state.userReducer
     console.log(user)
     return   {user}

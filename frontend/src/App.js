@@ -29,8 +29,9 @@ const AuthRoute = () => {
 function authUser() {
   let token = localStorage.getItem('token')
   let userName = localStorage.getItem('userName');
+  let lastLogin = localStorage.getItem('lastLogin');
   if(token && userName) {
-    props.dispatch({type: 'USER', user : {userName : userName}})
+    props.dispatch({type: 'USER', user : {userName : userName, lastLogin: lastLogin}})
     return true
   }
   return false
