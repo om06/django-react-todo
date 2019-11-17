@@ -2,6 +2,8 @@
 
 In this app user can create a collection of tasks known as **bucket** and can name it accordingly. Also user can add multiple tasks in the **bucket** and  mark it as *Done* or *Undone*. User can always delete and update his **Task** and **Bucket**.
 
+**API DOCUMENTATION** : [https://documenter.getpostman.com/view/5275697/SW7XZUJq](https://documenter.getpostman.com/view/5275697/SW7XZUJq)
+
 ## Installation
  - Update the system `sudo apt-get update`
  -  Install virtualenv `sudo apt-get install virtualenv`
@@ -48,3 +50,6 @@ Install the project
  - Install Frontend
  - `cd frontend`
  - `npm install`
+
+Database Schema / E-R Diagram
+![enter image description here](https://raw.githubusercontent.com/om06/django-react-todo/master/er_diagram.png)
