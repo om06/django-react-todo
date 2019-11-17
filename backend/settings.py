@@ -26,7 +26,7 @@ SECRET_KEY = 'g^ds=on*0de(*qq7*ytc9fksl@h&v!2ue^yy!ii@&)8a5ksf-y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']  # Replace wild card with production IP
 
 
 # Application definition
@@ -172,3 +172,12 @@ REST_FRAMEWORK = {
     "DATE_INPUT_FORMATS"            : ["%d-%m-%Y"],
 }
 
+# CORS HEADERS
+# ======================================================================================================================
+CORS_HEADER = [
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+MIDDLEWARE = CORS_HEADER + MIDDLEWARE
+
+CORS_ORIGIN_ALLOW_ALL = True
