@@ -3,7 +3,7 @@
 django==2.2.8
 
 # Creating rest api
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 
 
 # MYSQL Client
