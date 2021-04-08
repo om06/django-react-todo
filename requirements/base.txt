@@ -1,6 +1,6 @@
 # Django Framework
 # To run backend
-django==2.2.8
+django==2.2.20
 
 # Creating rest api
 djangorestframework==3.10.3
